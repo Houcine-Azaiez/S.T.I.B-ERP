@@ -1,0 +1,20 @@
+# Odoo runtime and local data
+*.log
+*.pyc
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+
+# Local backups should not be committed
+backups/*
+!backups/.gitkeep
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local environment overrides
+.env
+*.env
