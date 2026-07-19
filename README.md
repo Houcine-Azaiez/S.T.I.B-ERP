@@ -43,3 +43,12 @@ beton-odoo/
 - Put company-specific modules in `custom-addons/`.
 - Change all passwords before deploying to a real server.
 - For production, add HTTPS, domain, backups, firewall, monitoring, and a separate test database.
+
+## Seed Starter Data
+
+After creating the local `stib_erp` database, you can create the starter product
+categories and prototype products with:
+
+```powershell
+Get-Content .\scripts\seed_starter_data.py | docker exec -i beton-odoo odoo shell -d stib_erp --no-http
+```
