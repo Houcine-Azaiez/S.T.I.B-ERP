@@ -1,4 +1,4 @@
-# Beton Odoo
+# S.T.I.B ERP
 
 Local Odoo Community setup for the concrete products company prototype.
 
