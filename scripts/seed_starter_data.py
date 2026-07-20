@@ -40,6 +40,7 @@ def get_or_create_category(path):
 uom_units = env.ref("uom.product_uom_unit")
 uom_m2 = env.ref("uom.product_uom_square_meter")
 uom_kg = env.ref("uom.product_uom_kgm")
+uom_ton = env.ref("uom.product_uom_ton")
 
 categories = {
     "paving": get_or_create_category("Finished Products/Paving Stones"),
@@ -57,9 +58,9 @@ product_specs = [
     ("Red paving stone 20x10x6", categories["paving"], uom_m2, True, False, 28.0, 14.0),
     ("Hollow block 20x20x40", categories["blocks"], uom_units, True, False, 1.8, 0.9),
     ("Bordure 100x20x15", categories["bordures"], uom_units, True, False, 8.0, 4.0),
-    ("Cement", categories["cement"], uom_kg, False, True, 0.0, 0.25),
-    ("Sand", categories["aggregates"], uom_kg, False, True, 0.0, 0.03),
-    ("Gravel", categories["aggregates"], uom_kg, False, True, 0.0, 0.04),
+    ("Cement", categories["cement"], uom_ton, False, True, 0.0, 250.0),
+    ("Sand", categories["aggregates"], uom_ton, False, True, 0.0, 30.0),
+    ("Gravel", categories["aggregates"], uom_ton, False, True, 0.0, 40.0),
     ("Pigment", categories["pigments"], uom_kg, False, True, 0.0, 2.5),
     ("Pallet", categories["pallets"], uom_units, False, True, 0.0, 8.0),
 ]
