@@ -7,6 +7,8 @@ Run inside the Odoo container with:
 
 Category = env["product.category"].sudo()
 Product = env["product.template"].sudo()
+Bom = env["mrp.bom"].sudo()
+BomLine = env["mrp.bom.line"].sudo()
 
 created_categories = []
 created_products = []
@@ -41,6 +43,7 @@ uom_units = env.ref("uom.product_uom_unit")
 uom_m2 = env.ref("uom.product_uom_square_meter")
 uom_kg = env.ref("uom.product_uom_kgm")
 uom_ton = env.ref("uom.product_uom_ton")
+uom_litre = env.ref("uom.product_uom_litre")
 
 categories = {
     "paving": get_or_create_category("Finished Products/Paving Stones"),
@@ -59,9 +62,10 @@ product_specs = [
     ("Hollow block 20x20x40", categories["blocks"], uom_units, True, False, 1.8, 0.9),
     ("Bordure 100x20x15", categories["bordures"], uom_units, True, False, 8.0, 4.0),
     ("Cement", categories["cement"], uom_ton, False, True, 0.0, 250.0),
-    ("Sand", categories["aggregates"], uom_ton, False, True, 0.0, 30.0),
+    ("Sand 0/4", categories["aggregates"], uom_ton, False, True, 0.0, 30.0),
     ("Gravel", categories["aggregates"], uom_ton, False, True, 0.0, 40.0),
     ("Pigment", categories["pigments"], uom_kg, False, True, 0.0, 2.5),
+    ("Water", categories["additives"], uom_litre, False, False, 0.0, 0.0),
     ("Pallet", categories["pallets"], uom_units, False, True, 0.0, 8.0),
 ]
 
@@ -87,6 +91,41 @@ for name, category, uom, sale_ok, purchase_ok, list_price, standard_price in pro
     else:
         product = Product.create(values)
         created_products.append(product.name)
+
+finished = Product.search([("name", "=", "Grey paving stone 20x10x6")], limit=1)
+cement = Product.search([("name", "=", "Cement")], limit=1)
+sand = Product.search([("name", "=", "Sand 0/4")], limit=1)
+water = Product.search([("name", "=", "Water")], limit=1)
+pallet = Product.search([("name", "=", "Pallet")], limit=1)
+
+if all([finished, cement, sand, water, pallet]):
+    bom = Bom.search([("product_tmpl_id", "=", finished.id)], limit=1)
+    values = {
+        "product_tmpl_id": finished.id,
+        "product_qty": 100.0,
+        "product_uom_id": finished.uom_id.id,
+        "type": "normal",
+    }
+    if bom:
+        bom.write(values)
+    else:
+        bom = Bom.create(values)
+
+    bom.bom_line_ids.unlink()
+    for component, quantity in [
+        (cement, 2.4),
+        (sand, 9.3),
+        (water, 1000.0),
+        (pallet, 8.0),
+    ]:
+        BomLine.create(
+            {
+                "bom_id": bom.id,
+                "product_id": component.product_variant_id.id,
+                "product_qty": quantity,
+                "product_uom_id": component.uom_id.id,
+            }
+        )
 
 env.cr.commit()
 
